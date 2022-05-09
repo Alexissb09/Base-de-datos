@@ -1,0 +1,118 @@
+Punto 1)
+
+proy_infraccion := project dni, pagada (select pagada = 0(infraccion));
+proy_persona := project dni, nombre, codPostal (persona);
+proy_localidad := project codPostal, idProvincia (localidad);
+proy_provincia := project idProvincia (provincia);
+
+join_infra_persona := proy_infraccion njoin proy_persona;
+join_loc_prov := proy_localidad njoin proy_provincia;
+
+join_ambos := join_infra_persona njoin join_loc_prov;
+select_persona_corrientes := project dni, nombre (select idProvincia = 2 (join_ambos));
+
+----------------------------------------------------------------------------------------
+
+Punto 2)
+
+infracciones_1990 := select (fecha > 19900101) and (fecha < 19910101) (infraccion);
+
+----------------------------------------------------------------------------------------
+
+Punto 3)
+
+proy_infra := project idInfraccion, dni (infraccion);
+proy_infrac (idInfraccionc, dnic) := proy_infra;
+
+infraXinfrac := proy_infra product proy_infrac;
+
+select_persona := select dni = dnic and idInfraccion <> idInfraccionc (infraXinfrac);
+proy_persona := project dni (select_persona);
+join := proy_persona njoin persona;
+
+----------------------------------------------------------------------------------------
+
+Punto 4)
+
+proy_infra := project dni, patente (infraccion);
+proy_vehiculo := project dni, patente (vehiculo);
+
+join := proy_infra njoin proy_vehiculo;
+join_infra := join njoin infraccion;
+
+diferencia := infraccion difference join_infra;
+persona_no_titular := project nombre ((project dni (diferencia)) njoin persona);
+
+----------------------------------------------------------------------------------------
+
+Punto 5)
+
+proy_infra := project dni, patente (infraccion);
+proy_infrac (dnic, patentec) := proy_infra;
+
+producto_infra := proy_infra product proy_infrac;
+
+select_vehiculodif := select dni = dnic and patente <> patentec (producto_infra);
+
+proy_select := project dni (select_vehiculodif);
+
+persona_infraVehiculoDif := proy_select njoin persona;
+project_persona := project nombre (persona_infraVehiculoDif);
+
+----------------------------------------------------------------------------------------
+
+Punto 6)
+
+join_infraccion := vehiculo njoin infraccion;
+join := join_infraccion njoin valuacion;
+proy := project patente (join);
+proyeccion_infracion := project patente(join);
+join_con_infraccion := proyeccion_infracion njoin infraccion;
+diferencia := infraccion difference join_con_infraccion;
+
+----------------------------------------------------------------------------------------
+
+Punto 7) 
+
+join_infraccion := infraccion njoin tipoInfraccion;
+proy := project idInfraccion, dni, tipoInfraccion (join_infraccion);
+proy_c (idc, dnic, tipoc) := proy;
+select_ebriedad := select tipoInfraccion = 7 (proy);
+
+produc := proy_c product select_ebriedad;
+
+infraccion_ebriedad := select dnic = dni and idc <> tipoInfraccion (produc);
+
+proy_1 := project dni (infraccion_ebriedad);
+
+----------------------------------------------------------------------------------------
+
+Punto 8) 
+
+proy_infra := project patente (infraccion);
+proy_vehiculo := project idModelo, patente (vehiculo);
+proy_modelo := project idModelo, importado (modelo);
+
+join_infra_vehiculo := proy_infra njoin proy_vehiculo;
+join_vehiculo_modelo := join_infra_vehiculo njoin proy_modelo;
+
+select_importado := select importado = 1 (join_vehiculo_modelo);
+
+infraccion_importado := project idInfraccion, dni, patente, tipoInfraccion, fecha, direccion, codPostal, pagada (select_importado njoin infraccion);
+
+----------------------------------------------------------------------------------------
+
+Punto 9)
+
+proy_infra := project patente (infraccion);
+proy_vehiculo := project idModelo, patente (vehiculo);
+proy_modelo := project idModelo, idMarca(modelo);
+proy_marca := project idMarca, marca (marca);
+
+join_infra_vehiculo := proy_infra njoin proy_vehiculo;
+join_modelo_marca := proy_modelo njoin proy_marca;
+join_vehiculo_modelo := join_infra_vehiculo njoin join_modelo_marca;
+
+select_marca := select marca = 'MONTENEGRO' (join_vehiculo_modelo);
+
+infracciones_montenegro := project idInfraccion, dni, patente, tipoInfraccion, fecha, direccion, codPostal, pagada (select_marca njoin infraccion);
